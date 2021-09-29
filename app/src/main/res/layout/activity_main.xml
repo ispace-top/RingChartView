@@ -14,10 +14,9 @@
         app:minProgress="2"
         app:maxValue="100"
         app:mutilProgress="true"
-        android:paddingLeft="50dp"
-        android:paddingRight="20dp"
         app:paintWidth="15dp"
-        android:background="#ff3c3c3c"
+        app:drawStart="160"
+        android:background="#c3c3c3c3"
         android:layout_height="wrap_content"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
