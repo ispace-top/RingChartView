@@ -7,5 +7,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "RingChartView"
-//include ':app'
 include ':RingChartView'
