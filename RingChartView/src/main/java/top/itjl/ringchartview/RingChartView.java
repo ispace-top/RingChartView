@@ -106,6 +106,8 @@ public class RingChartView extends View {
 
         animationTime = mTypedArray.getInteger(R.styleable.RingChartView_animationTime, 1500);
         mTypedArray.recycle();
+        float offsetAngle = chartAngleStyle == FULL_CIRCLE ? 0 : chartAngleStyle - drawStart;
+        chartSweepAngle = chartAngleStyle == FULL_CIRCLE ? 360 : chartSweepAngle + offsetAngle * 2;
     }
 
 
@@ -134,14 +136,14 @@ public class RingChartView extends View {
 
         if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.AT_MOST) {
             int finalWidth = (int) (paintWidth * 5);
-            int finalHeight = chartAngleStyle == HALF_CIRCLE ? (int) (finalWidth / 2 + paintWidth) : finalWidth;
+            int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) (finalWidth / 2 + paintWidth) : finalWidth;
             setMeasuredDimension(finalWidth, finalHeight);
         } else if (widthMode == MeasureSpec.AT_MOST) {
-            int finalWidth = (int) ((chartAngleStyle == HALF_CIRCLE ? height * 2 : height) - paintWidth);
+            int finalWidth = (int) ((chartSweepAngle == HALF_CIRCLE ? height * 2 : height) - paintWidth);
             finalWidth = Math.min(finalWidth, width);
             setMeasuredDimension(finalWidth, height);
         } else if (heightMode == MeasureSpec.AT_MOST) {
-            int finalHeight = chartAngleStyle == HALF_CIRCLE ? (int) (width / 2 + paintWidth) : width;
+            int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) (width / 2 + paintWidth) : width;
             setMeasuredDimension(width, finalHeight);
         }
     }
@@ -179,9 +181,7 @@ public class RingChartView extends View {
     private void drawDst(Canvas canvas) {
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setColor(backGroundColor);
-        float offsetAngle = chartAngleStyle == FULL_CIRCLE ? 0 : chartAngleStyle - drawStart;
-        chartSweepAngle = chartAngleStyle == FULL_CIRCLE ? 360 : chartAngleStyle + offsetAngle * 2;
-        canvas.drawArc(rectF, drawStart - offsetAngle, chartSweepAngle * phaseS, false, mPaint);
+        canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
     }
 
     //绘制单一进度
@@ -270,7 +270,8 @@ public class RingChartView extends View {
 
     /**
      * 设置图表样式
-     * @param chartAngleStyle  {@value HALF_CIRCLE,FULL_CIRCLE}
+     *
+     * @param chartAngleStyle {@value HALF_CIRCLE,FULL_CIRCLE}
      */
     public void setChartAngleStyle(float chartAngleStyle) {
         this.chartAngleStyle = chartAngleStyle;
@@ -278,7 +279,8 @@ public class RingChartView extends View {
 
     /**
      * 获取最大值
-     * @return  maxValue
+     *
+     * @return maxValue
      */
     public int getMaxValue() {
         return maxValue;
@@ -286,6 +288,7 @@ public class RingChartView extends View {
 
     /**
      * 设置最大值
+     *
      * @param maxValue maxValue
      */
     public void setMaxValue(int maxValue) {

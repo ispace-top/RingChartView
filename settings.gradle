@@ -6,6 +6,6 @@ dependencyResolutionManagement {
         jcenter() // Warning: this repository is going to shut down soon
     }
 }
-rootProject.name = "RingChartViewDemo"
-include ':app'
+rootProject.name = "RingChartView"
+//include ':app'
 include ':RingChartView'
