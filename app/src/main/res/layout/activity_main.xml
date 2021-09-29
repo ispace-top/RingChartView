@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <top.itjl.ringchartview.RingChartView
+        android:id="@+id/ring_chart_view"
+        android:layout_width="match_parent"
+        app:protectMinValue="true"
+        app:minProgress="2"
+        app:maxValue="100"
+        app:mutilProgress="true"
+        android:paddingLeft="50dp"
+        android:paddingRight="20dp"
+        app:paintWidth="15dp"
+        android:background="#ff3c3c3c"
+        android:layout_height="wrap_content"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
