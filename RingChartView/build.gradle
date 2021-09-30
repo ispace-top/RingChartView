@@ -44,9 +44,9 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.github.itjl313'
+                groupId = 'com.github.kindom162'
                 artifactId = 'RingChartView'
-                version = '1.0.24'
+                version = '1.0.25'
             }
         }
     }
