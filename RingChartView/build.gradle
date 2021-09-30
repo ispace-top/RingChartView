@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
 }
-group='com.github.Kerwin-CH'//com.github.{你的的账号名}
 
 android {
     compileSdk 31
@@ -23,8 +23,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
@@ -36,4 +36,17 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'itjl.top.kerwin'
+                artifactId = 'RingChartView'
+                version = '1.0.23'
+            }
+        }
+    }
 }
