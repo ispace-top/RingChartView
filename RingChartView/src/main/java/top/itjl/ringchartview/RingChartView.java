@@ -19,6 +19,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class RingChartView extends View {
     //图标开始点，即 0点值位置
     public static final float START_RIGHT = 0, START_BOTTOM = 90, START_LEFT = 180, START_TOP = 270;
 
-    private int animationTime = 1500;//动画持续时间
+    private int animationTime = 1200;//动画持续时间
     private float drawStart = START_LEFT;
     private float chartAngleStyle = HALF_CIRCLE;
     private int maxValue = 100;
@@ -57,6 +58,7 @@ public class RingChartView extends View {
     private boolean protectMinValue = true;
     private float minProgress = 1;
     private int paintCap = 1;
+    private float radius;
 
     public RingChartView(Context context) {
         this(context, null);
@@ -141,13 +143,16 @@ public class RingChartView extends View {
             int finalWidth = (int) (paintWidth * 5);
             int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) (finalWidth / 2 + paintWidth) : finalWidth;
             setMeasuredDimension(finalWidth, finalHeight);
+            radius = (float) ((finalWidth - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
         } else if (widthMode == MeasureSpec.AT_MOST) {
             int finalWidth = (int) ((chartSweepAngle == HALF_CIRCLE ? height * 2 : height) - paintWidth);
             finalWidth = Math.min(finalWidth, width);
             setMeasuredDimension(finalWidth, height);
+            radius = (float) ((height - getPaddingTop() - getPaddingBottom()) / 2 - paintWidth * 0.5);
         } else if (heightMode == MeasureSpec.AT_MOST) {
             int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) (width / 2 + paintWidth) : width;
             setMeasuredDimension(width, finalHeight);
+            radius = (float) ((width - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
         }
     }
 
@@ -182,9 +187,13 @@ public class RingChartView extends View {
     }
 
     private void drawDst(Canvas canvas) {
-        mPaint.setStrokeCap(paintCap == 1 ? Paint.Cap.ROUND : Paint.Cap.SQUARE);
+        mPaint.setStrokeCap(paintCap == 1 ? Paint.Cap.ROUND : Paint.Cap.BUTT);
         mPaint.setColor(backGroundColor);
-        canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
+        if (paintCap == 1) {
+            float tempAngle = (float) (180 * paintWidth * 0.5f / (Math.PI * radius));
+            canvas.drawArc(rectF, drawStart + tempAngle, chartSweepAngle * phaseS - tempAngle*2, false, mPaint);
+        } else
+            canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
     }
 
     //绘制单一进度
@@ -207,23 +216,31 @@ public class RingChartView extends View {
     @SuppressLint("LongLogTag")
     private void drawMutilProgress(Canvas canvas, float phaseS) {
         float begin = drawStart;
-        mPaint.setStrokeCap(Paint.Cap.SQUARE); // 把每段圆弧改成直角的
+        mPaint.setStrokeCap(Paint.Cap.BUTT); // 把每段圆弧改成直角的
 
         for (ProgressNode node : progressNodes) {
             if (node == null) return;
             float sweep = chartSweepAngle / maxValue * node.value;//扫过角度
-            if (protectMinValue && sweep < minProgress) sweep = minProgress;
+
             if (begin > drawStart + chartSweepAngle) return;
             if (begin + sweep > drawStart + chartSweepAngle) {
                 sweep = drawStart + chartSweepAngle - begin;
             }
             mPaint.setColor(node.color);
             mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawArc(rectF, begin, sweep * phaseS, false, mPaint);
+            float resultSweep = processValues(sweep * phaseS);
+            if (resultSweep == 0) resultSweep = 0.1f;
+            if (protectMinValue && resultSweep < minProgress) resultSweep = minProgress;
+            Log.w(TAG, "Draw[  begin =>" + begin + "  sweep => " + resultSweep + "]");
+            canvas.drawArc(rectF, begin, resultSweep, false, mPaint);
             begin += sweep * phaseS;
         }
     }
 
+
+    public float processValues(float values) {
+        return (float) ((Math.floor(values * 100)) / 100f);
+    }
 
     /**
      * 获取动画时长
