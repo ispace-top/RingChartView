@@ -216,7 +216,7 @@ public class RingChartView extends View {
             }
             mPaint.setColor(node.color);
             mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            Log.w(TAG, " 【Draw】  begin = " + begin + "  sweep = " + sweep);
+            Log.w(TAG, " 【Draw】  begin = " + begin + "  sweep = " + sweep * phaseS);
             canvas.drawArc(rectF, begin, sweep * phaseS, false, mPaint);
             begin += sweep * phaseS;
         }
@@ -366,6 +366,8 @@ public class RingChartView extends View {
      */
     public void setProgressNodes(List<ProgressNode> progressNodes) {
         this.progressNodes = progressNodes;
+        semiAnimator.start();
+        invalidate();
     }
 
     /**
