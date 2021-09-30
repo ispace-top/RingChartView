@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
 }
-group='com.github.Kerwin-CH'//com.github.{你的的账号名}
 
 android {
     compileSdk 31
