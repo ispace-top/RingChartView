@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * @author: Kerwin
- * @date: 2021/9/29
+ * @date: 2021/9/30
  */
 public class RingChartView extends View {
     private static final String TAG = "RingChartView";
@@ -56,6 +56,7 @@ public class RingChartView extends View {
     private int height;
     private boolean protectMinValue = true;
     private float minProgress = 1;
+    private int paintCap = 1;
 
     public RingChartView(Context context) {
         this(context, null);
@@ -103,6 +104,8 @@ public class RingChartView extends View {
         progressColor = mTypedArray.getColor(R.styleable.RingChartView_progressColor, Color.GREEN);
         progress = mTypedArray.getInteger(R.styleable.RingChartView_progress, 0);
         paintWidth = mTypedArray.getDimension(R.styleable.RingChartView_paintWidth, 30);
+
+        paintCap = mTypedArray.getInt(R.styleable.RingChartView_paintCap, 1);
 
         animationTime = mTypedArray.getInteger(R.styleable.RingChartView_animationTime, 1500);
         mTypedArray.recycle();
@@ -179,7 +182,7 @@ public class RingChartView extends View {
     }
 
     private void drawDst(Canvas canvas) {
-        mPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPaint.setStrokeCap(paintCap == 1 ? Paint.Cap.ROUND : Paint.Cap.SQUARE);
         mPaint.setColor(backGroundColor);
         canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
     }
@@ -216,7 +219,6 @@ public class RingChartView extends View {
             }
             mPaint.setColor(node.color);
             mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            Log.w(TAG, " 【Draw】  begin = " + begin + "  sweep = " + sweep * phaseS);
             canvas.drawArc(rectF, begin, sweep * phaseS, false, mPaint);
             begin += sweep * phaseS;
         }
@@ -293,6 +295,7 @@ public class RingChartView extends View {
      */
     public void setMaxValue(int maxValue) {
         this.maxValue = maxValue;
+        invalidate();
     }
 
     public float getChartSweepAngle() {
@@ -301,6 +304,7 @@ public class RingChartView extends View {
 
     public void setChartSweepAngle(float chartSweepAngle) {
         this.chartSweepAngle = chartSweepAngle;
+        invalidate();
     }
 
     public int getProgress() {
@@ -309,6 +313,7 @@ public class RingChartView extends View {
 
     public void setProgress(int progress) {
         this.progress = progress;
+        invalidate();
     }
 
     public int getBackGroundColor() {
@@ -366,6 +371,15 @@ public class RingChartView extends View {
      */
     public void setProgressNodes(List<ProgressNode> progressNodes) {
         this.progressNodes = progressNodes;
+        semiAnimator.start();
+        invalidate();
+    }
+
+
+    /**
+     * 播放动画
+     */
+    public void playAnimation() {
         semiAnimator.start();
         invalidate();
     }
