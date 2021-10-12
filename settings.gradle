@@ -6,5 +6,5 @@ dependencyResolutionManagement {
         maven { url "https://jitpack.io" }
     }
 }
-rootProject.name = "RingChartView"
+rootProject.name = "RingChartViewLib"
 include ':RingChartView'
