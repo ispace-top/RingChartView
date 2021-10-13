@@ -393,7 +393,7 @@ public class RingChartView extends View {
                 node.value = temp;
             }
         }
-        return null;
+        return progressNodes;
     }
 
     /**
