@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RingChartView">
-        <attr name="chart_progressColor" format="color" />
+        <attr name="progressColor" format="color" />
         <attr name="backColor" format="color" />
         <attr name="maxValue" format="integer" />
-        <attr name="chart_progress" format="integer" />
+        <attr name="progress" format="integer" />
         <attr name="paintWidth" format="dimension" />
         <attr name="chartAngleStyle">
             <enum name="HALF_CIRCLE" value="180" />
             <enum name="FULL_CIRCLE" value="360" />
         </attr>
-        <attr name="drawStart" format="float" />
-        <attr name="mutilProgress" format="boolean" />
-        <attr name="protectMinValue" format="boolean" />
-        <attr name="minProgress" format="float" />
-        <attr name="chart_animationTime" format="integer" />
         <attr name="paintCap">
             <enum name="ROUND" value="1"/>
             <enum name="SQUARE" value="2"/>
         </attr>
+        <attr name="drawStart" format="float" />
+        <attr name="mutilProgress" format="boolean" />
+        <attr name="protectMinValue" format="boolean" />
+        <attr name="minProgress" format="float" />
+        <attr name="animationTime" format="integer" />
     </declare-styleable>
-
 </resources>
