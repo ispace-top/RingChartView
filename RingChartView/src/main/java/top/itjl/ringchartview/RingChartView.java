@@ -19,7 +19,6 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -191,7 +190,7 @@ public class RingChartView extends View {
         mPaint.setColor(backGroundColor);
         if (paintCap == 1) {
             float tempAngle = (float) (180 * paintWidth * 0.5f / (Math.PI * radius));
-            canvas.drawArc(rectF, drawStart + tempAngle, chartSweepAngle * phaseS - tempAngle*2, false, mPaint);
+            canvas.drawArc(rectF, drawStart + tempAngle, chartSweepAngle * phaseS - tempAngle * 2, false, mPaint);
         } else
             canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
     }
@@ -227,11 +226,10 @@ public class RingChartView extends View {
                 sweep = drawStart + chartSweepAngle - begin;
             }
             mPaint.setColor(node.color);
-            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
             float resultSweep = processValues(sweep * phaseS);
-            if (resultSweep == 0) resultSweep = 0.1f;
-            if (protectMinValue && resultSweep < minProgress) resultSweep = minProgress;
-            Log.w(TAG, "Draw[  begin =>" + begin + "  sweep => " + resultSweep + "]");
+//            if (resultSweep == 0) resultSweep = 0.1f;
+//            if (protectMinValue && resultSweep < minProgress) resultSweep = minProgress;
+            if(BuildConfig.DEBUG)Log.d(TAG, "Draw [  begin =>" + begin + "  sweep => " + resultSweep + "]");
             canvas.drawArc(rectF, begin, resultSweep, false, mPaint);
             begin += sweep * phaseS;
         }
@@ -399,10 +397,7 @@ public class RingChartView extends View {
         for (ProgressNode node : progressNodes) {
             maxValue += node.value;
         }
-        if (protectMinValue) {
-            progressNodes = processNodes(progressNodes);
-        }
-        this.progressNodes = progressNodes;
+        this.progressNodes = protectMinValue ? processNodes(progressNodes) : progressNodes;
         semiAnimator.start();
         invalidate();
     }
