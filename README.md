@@ -1,5 +1,5 @@
 # RingChartView
-[![](https://jitpack.io/v/itjl313/RingChartView.svg)](https://jitpack.io/#itjl313/RingChartView)
+[![](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)
 
 
 A Ring chart custom View for Android
