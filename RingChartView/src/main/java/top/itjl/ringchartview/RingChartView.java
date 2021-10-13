@@ -19,13 +19,12 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author: Kerwin
- * @date: 2021/9/30
+ * @date: 2021/9/29
  */
 public class RingChartView extends View {
     private static final String TAG = "RingChartView";
@@ -36,10 +35,10 @@ public class RingChartView extends View {
     //图标开始点，即 0点值位置
     public static final float START_RIGHT = 0, START_BOTTOM = 90, START_LEFT = 180, START_TOP = 270;
 
-    private int animationTime = 1200;//动画持续时间
+    private int animationTime = 1500;//动画持续时间
     private float drawStart = START_LEFT;
     private float chartAngleStyle = HALF_CIRCLE;
-    private int maxValue = 100;
+    private float maxValue = 100;
     private float chartSweepAngle = HALF_CIRCLE;
     private int progress = 0;
     private int backGroundColor = Color.LTGRAY;
@@ -57,8 +56,6 @@ public class RingChartView extends View {
     private int height;
     private boolean protectMinValue = true;
     private float minProgress = 1;
-    private int paintCap = 1;
-    private float radius;
 
     public RingChartView(Context context) {
         this(context, null);
@@ -103,13 +100,11 @@ public class RingChartView extends View {
         drawStart = mTypedArray.getFloat(R.styleable.RingChartView_drawStart, START_LEFT);
 
         maxValue = mTypedArray.getInteger(R.styleable.RingChartView_maxValue, 100);
-        progressColor = mTypedArray.getColor(R.styleable.RingChartView_progressColor, Color.GREEN);
-        progress = mTypedArray.getInteger(R.styleable.RingChartView_progress, 0);
+        progressColor = mTypedArray.getColor(R.styleable.RingChartView_chart_progressColor, Color.GREEN);
+        progress = mTypedArray.getInteger(R.styleable.RingChartView_chart_progress, 0);
         paintWidth = mTypedArray.getDimension(R.styleable.RingChartView_paintWidth, 30);
 
-        paintCap = mTypedArray.getInt(R.styleable.RingChartView_paintCap, 1);
-
-        animationTime = mTypedArray.getInteger(R.styleable.RingChartView_animationTime, 1500);
+        animationTime = mTypedArray.getInteger(R.styleable.RingChartView_chart_animationTime, 1500);
         mTypedArray.recycle();
         float offsetAngle = chartAngleStyle == FULL_CIRCLE ? 0 : chartAngleStyle - drawStart;
         chartSweepAngle = chartAngleStyle == FULL_CIRCLE ? 360 : chartSweepAngle + offsetAngle * 2;
@@ -143,16 +138,13 @@ public class RingChartView extends View {
             int finalWidth = (int) (paintWidth * 5);
             int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) (finalWidth / 2 + paintWidth) : finalWidth;
             setMeasuredDimension(finalWidth, finalHeight);
-            radius = (float) ((finalWidth - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
         } else if (widthMode == MeasureSpec.AT_MOST) {
             int finalWidth = (int) ((chartSweepAngle == HALF_CIRCLE ? height * 2 : height) - paintWidth);
             finalWidth = Math.min(finalWidth, width);
             setMeasuredDimension(finalWidth, height);
-            radius = (float) ((height - getPaddingTop() - getPaddingBottom()) / 2 - paintWidth * 0.5);
         } else if (heightMode == MeasureSpec.AT_MOST) {
             int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) (width / 2 + paintWidth) : width;
             setMeasuredDimension(width, finalHeight);
-            radius = (float) ((width - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
         }
     }
 
@@ -187,13 +179,9 @@ public class RingChartView extends View {
     }
 
     private void drawDst(Canvas canvas) {
-        mPaint.setStrokeCap(paintCap == 1 ? Paint.Cap.ROUND : Paint.Cap.BUTT);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setColor(backGroundColor);
-        if (paintCap == 1) {
-            float tempAngle = (float) (180 * paintWidth * 0.5f / (Math.PI * radius));
-            canvas.drawArc(rectF, drawStart + tempAngle, chartSweepAngle * phaseS - tempAngle*2, false, mPaint);
-        } else
-            canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
+        canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
     }
 
     //绘制单一进度
@@ -216,31 +204,24 @@ public class RingChartView extends View {
     @SuppressLint("LongLogTag")
     private void drawMutilProgress(Canvas canvas, float phaseS) {
         float begin = drawStart;
-        mPaint.setStrokeCap(Paint.Cap.BUTT); // 把每段圆弧改成直角的
+        mPaint.setStrokeCap(Paint.Cap.SQUARE); // 把每段圆弧改成直角的
 
         for (ProgressNode node : progressNodes) {
             if (node == null) return;
             float sweep = chartSweepAngle / maxValue * node.value;//扫过角度
-
+            if (protectMinValue && sweep < minProgress) sweep = minProgress;
             if (begin > drawStart + chartSweepAngle) return;
             if (begin + sweep > drawStart + chartSweepAngle) {
                 sweep = drawStart + chartSweepAngle - begin;
             }
             mPaint.setColor(node.color);
             mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            float resultSweep = processValues(sweep * phaseS);
-            if (resultSweep == 0) resultSweep = 0.1f;
-            if (protectMinValue && resultSweep < minProgress) resultSweep = minProgress;
-            Log.w(TAG, "Draw[  begin =>" + begin + "  sweep => " + resultSweep + "]");
-            canvas.drawArc(rectF, begin, resultSweep, false, mPaint);
+            Log.w(TAG, " 【Draw】  begin = " + begin + "  sweep = " + sweep * phaseS);
+            canvas.drawArc(rectF, begin, sweep * phaseS, false, mPaint);
             begin += sweep * phaseS;
         }
     }
 
-
-    public float processValues(float values) {
-        return (float) ((Math.floor(values * 100)) / 100f);
-    }
 
     /**
      * 获取动画时长
@@ -301,7 +282,7 @@ public class RingChartView extends View {
      *
      * @return maxValue
      */
-    public int getMaxValue() {
+    public float getMaxValue() {
         return maxValue;
     }
 
@@ -312,7 +293,6 @@ public class RingChartView extends View {
      */
     public void setMaxValue(int maxValue) {
         this.maxValue = maxValue;
-        invalidate();
     }
 
     public float getChartSweepAngle() {
@@ -321,7 +301,6 @@ public class RingChartView extends View {
 
     public void setChartSweepAngle(float chartSweepAngle) {
         this.chartSweepAngle = chartSweepAngle;
-        invalidate();
     }
 
     public int getProgress() {
@@ -330,7 +309,6 @@ public class RingChartView extends View {
 
     public void setProgress(int progress) {
         this.progress = progress;
-        invalidate();
     }
 
     public int getBackGroundColor() {
@@ -382,23 +360,40 @@ public class RingChartView extends View {
     }
 
     /**
-     * 设置多个元素节点
-     *
-     * @param progressNodes 元素节点列表
-     */
-    public void setProgressNodes(List<ProgressNode> progressNodes) {
-        this.progressNodes = progressNodes;
-        semiAnimator.start();
-        invalidate();
-    }
-
-
-    /**
      * 播放动画
      */
     public void playAnimation() {
         semiAnimator.start();
         invalidate();
+    }
+
+    /**
+     * 设置多个元素节点
+     *
+     * @param progressNodes 元素节点列表
+     */
+    public void setProgressNodes(List<ProgressNode> progressNodes) {
+        maxValue = 0;
+        for (ProgressNode node : progressNodes) {
+            maxValue += node.value;
+        }
+        if (protectMinValue) {
+            progressNodes = processNodes(progressNodes);
+        }
+        this.progressNodes = progressNodes;
+        semiAnimator.start();
+        invalidate();
+    }
+
+    private List<ProgressNode> processNodes(List<ProgressNode> progressNodes) {
+        for (ProgressNode node : progressNodes) {
+            if (node.value / maxValue < minProgress / chartSweepAngle) {
+                float temp = minProgress * maxValue / chartSweepAngle;
+                maxValue += temp - node.value;
+                node.value = temp;
+            }
+        }
+        return null;
     }
 
     /**
