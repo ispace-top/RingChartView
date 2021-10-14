@@ -226,10 +226,11 @@ public class RingChartView extends View {
                 sweep = drawStart + chartSweepAngle - begin;
             }
             mPaint.setColor(node.color);
+            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
             float resultSweep = processValues(sweep * phaseS);
-//            if (resultSweep == 0) resultSweep = 0.1f;
-//            if (protectMinValue && resultSweep < minProgress) resultSweep = minProgress;
-            if(BuildConfig.DEBUG)Log.d(TAG, "Draw [  begin =>" + begin + "  sweep => " + resultSweep + "]");
+            if (resultSweep == 0) resultSweep = 0.1f;
+            if (protectMinValue && resultSweep < minProgress) resultSweep = minProgress;
+            if(BuildConfig.DEBUG)Log.d(TAG, "Draw[  begin =>" + begin + "  sweep => " + resultSweep + "]");
             canvas.drawArc(rectF, begin, resultSweep, false, mPaint);
             begin += sweep * phaseS;
         }
