@@ -10,7 +10,7 @@
     }
     
     //在module目录的build.gradle配置依赖导入
-    implementation 'com.github.kerwin162:RingChartView:1.0.32'
+    implementation 'com.github.kerwin162:RingChartView:version'
 ```
 
 #### 部分说明
