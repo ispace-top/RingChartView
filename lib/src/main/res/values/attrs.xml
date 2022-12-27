@@ -15,7 +15,7 @@
             <enum name="SQUARE" value="2"/>
         </attr>
         <attr name="drawStart" format="float" />
-        <attr name="mutilProgress" format="boolean" />
+        <attr name="multiProgress" format="boolean" />
         <attr name="protectMinValue" format="boolean" />
         <attr name="minProgress" format="float" />
         <attr name="animationTime" format="integer" />

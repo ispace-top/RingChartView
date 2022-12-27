@@ -43,7 +43,7 @@ public class RingChartView extends View {
     private int progress = 0;
     private int backGroundColor = Color.LTGRAY;
     private int progressColor = Color.GREEN;
-    private boolean isMutilProgress = true;
+    private boolean isMultiProgress = true;
     private float paintWidth = 40;
     private Paint mPaint = new Paint();
 
@@ -90,10 +90,11 @@ public class RingChartView extends View {
     }
 
     private void getXMLAttrs(Context context, AttributeSet attrs) {
+        Log.d(TAG,"getXMLAttrs => start");
         TypedArray mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.RingChartView);
         // 获取自定义属性和默认值
         backGroundColor = mTypedArray.getColor(R.styleable.RingChartView_backColor, Color.LTGRAY);
-        isMutilProgress = mTypedArray.getBoolean(R.styleable.RingChartView_mutilProgress, true);
+        isMultiProgress = mTypedArray.getBoolean(R.styleable.RingChartView_multiProgress, true);
 
         protectMinValue = mTypedArray.getBoolean(R.styleable.RingChartView_protectMinValue, true);
         minProgress = mTypedArray.getFloat(R.styleable.RingChartView_minProgress, 1);
@@ -107,11 +108,12 @@ public class RingChartView extends View {
         paintWidth = mTypedArray.getDimension(R.styleable.RingChartView_paintWidth, 30);
 
         paintCap = mTypedArray.getInt(R.styleable.RingChartView_paintCap, 1);
-
+        Log.d(TAG,"PaintCap => "+paintCap);
         animationTime = mTypedArray.getInteger(R.styleable.RingChartView_animationTime, 1500);
         mTypedArray.recycle();
         float offsetAngle = chartAngleStyle == FULL_CIRCLE ? 0 : chartAngleStyle - drawStart;
         chartSweepAngle = chartAngleStyle == FULL_CIRCLE ? 360 : chartSweepAngle + offsetAngle * 2;
+        Log.d(TAG,"getXMLAttrs => end");
     }
 
 
@@ -178,10 +180,10 @@ public class RingChartView extends View {
     }
 
     private void drawSrc(Canvas canvas) {
-        if (isMutilProgress) {
-            drawMutilProgress(canvas, phaseS);
+        if (isMultiProgress) {
+            drawMultiProgress(canvas, phaseS);
         } else {
-            drawSignleProgress(canvas, phaseS);
+            drawSingleProgress(canvas, phaseS);
         }
     }
 
@@ -196,7 +198,7 @@ public class RingChartView extends View {
     }
 
     //绘制单一进度
-    private void drawSignleProgress(Canvas canvas, float phaseS) {
+    private void drawSingleProgress(Canvas canvas, float phaseS) {
         float sweep = chartSweepAngle / maxValue * progress;//扫过角度
         if (sweep > drawStart + chartSweepAngle) {
             sweep = drawStart + chartSweepAngle;
@@ -213,7 +215,7 @@ public class RingChartView extends View {
      * @param canvas 画布
      */
     @SuppressLint("LongLogTag")
-    private void drawMutilProgress(Canvas canvas, float phaseS) {
+    private void drawMultiProgress(Canvas canvas, float phaseS) {
         float begin = drawStart;
         mPaint.setStrokeCap(Paint.Cap.BUTT); // 把每段圆弧改成直角的
 
@@ -230,7 +232,9 @@ public class RingChartView extends View {
             float resultSweep = processValues(sweep * phaseS);
             if (resultSweep == 0) resultSweep = 0.1f;
             if (protectMinValue && resultSweep < minProgress) resultSweep = minProgress;
-            if(BuildConfig.DEBUG)Log.d(TAG, "Draw[  begin =>" + begin + "  sweep => " + resultSweep + "]");
+            if (Util.isDebug(getContext())) {
+                Log.d(TAG, "Draw[  begin =>" + begin + "  sweep => " + resultSweep + "]");
+            }
             canvas.drawArc(rectF, begin, resultSweep, false, mPaint);
             begin += sweep * phaseS;
         }
@@ -348,12 +352,12 @@ public class RingChartView extends View {
         this.progressColor = progressColor;
     }
 
-    public boolean isMutilProgress() {
-        return isMutilProgress;
+    public boolean isMultiProgress() {
+        return isMultiProgress;
     }
 
-    public void setMutilProgress(boolean mutilProgress) {
-        isMutilProgress = mutilProgress;
+    public void setMultiProgress(boolean multiProgress) {
+        isMultiProgress = multiProgress;
     }
 
     public float getPaintWidth() {
