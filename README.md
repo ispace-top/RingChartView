@@ -16,7 +16,8 @@
         app:backColor="@android:color/holo_orange_light"
         android:padding="20dp"/>
 ```
-<img src="pic/full_circle.png" width="180px" />
+<img src="pic/full_circle.png" width="220px" />
+
 ##### 2. 半环形图表
 ```xml
     <top.itjl.ringchartview.RingChartView
@@ -31,7 +32,7 @@
         app:paintWidth="15dp"
         android:padding="20dp"/>
 ```
-<img src="pic/half_circle02.png" width="180px" />
+<img src="pic/half_circle02.png" width="220px" />
 
 ##### 2. 多层形图表
 ```xml
@@ -49,16 +50,16 @@
         android:padding="20dp"/>
 ```
 ```java
-	ringChartView2.setMultiProgress(true);
-	List<RingChartView.ProgressNode> nodeList=new ArrayList<>();
-  nodeList.add(new RingChartView.ProgressNode(10, Color.GREEN));
-  nodeList.add(new RingChartView.ProgressNode(20, Color.BLUE));
-  nodeList.add(new RingChartView.ProgressNode(50, Color.RED));
-  nodeList.add(new RingChartView.ProgressNode(10, Color.YELLOW));
-  ringChartView2.setProgressNodes(nodeList);
+    ringChartView2.setMultiProgress(true);
+    List<RingChartView.ProgressNode> nodeList=new ArrayList<>();
+    nodeList.add(new RingChartView.ProgressNode(10, Color.GREEN));
+    nodeList.add(new RingChartView.ProgressNode(20, Color.BLUE));
+    nodeList.add(new RingChartView.ProgressNode(50, Color.RED));
+    nodeList.add(new RingChartView.ProgressNode(10, Color.YELLOW));
+    ringChartView2.setProgressNodes(nodeList);
 ```
 
-<img src="pic/half_circle01.png" width="180px" />
+<img src="pic/half_circle01.png" width="220px" />
 
 #### 部分字段参数说明
 
