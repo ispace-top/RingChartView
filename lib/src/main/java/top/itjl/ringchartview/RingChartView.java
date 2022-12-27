@@ -16,8 +16,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,28 +57,21 @@ public class RingChartView extends View {
     private int paintCap = 1;
     private float radius;
 
-    private PorterDuffXfermode porterDuffXfermode=new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+    private PorterDuffXfermode porterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+    float tempAngle;
 
     public RingChartView(Context context) {
         this(context, null);
     }
 
-    public RingChartView(Context context, @Nullable AttributeSet attrs) {
+    public RingChartView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public RingChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public RingChartView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initialize(context, attrs);
     }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public RingChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        initialize(context, attrs);
-    }
-
 
     private void initialize(Context context, AttributeSet attrs) {
         getXMLAttrs(context, attrs);
@@ -154,6 +145,8 @@ public class RingChartView extends View {
             setMeasuredDimension(width, finalHeight);
             radius = (float) ((width - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
         }
+
+        tempAngle = (float) (180 * paintWidth * 0.5f / (Math.PI * radius));
     }
 
     @SuppressLint("DrawAllocation")
@@ -190,8 +183,7 @@ public class RingChartView extends View {
         mPaint.setStrokeCap(paintCap == 1 ? Paint.Cap.ROUND : Paint.Cap.BUTT);
         mPaint.setColor(backGroundColor);
         if (paintCap == 1) {
-            float tempAngle = (float) (180 * paintWidth * 0.5f / (Math.PI * radius));
-            canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS - tempAngle * 2, false, mPaint);
+            canvas.drawArc(rectF, drawStart + tempAngle, chartSweepAngle * phaseS - tempAngle * 2, false, mPaint);
         } else
             canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
     }
@@ -205,7 +197,11 @@ public class RingChartView extends View {
         if (protectMinValue && sweep < minProgress) sweep = minProgress;
         mPaint.setColor(progressColor);
         mPaint.setXfermode(porterDuffXfermode);
-        canvas.drawArc(rectF, drawStart, sweep * phaseS, false, mPaint);
+        if (paintCap == 1) {
+            canvas.drawArc(rectF, drawStart + tempAngle, sweep * phaseS - tempAngle * 2, false, mPaint);
+        } else {
+            canvas.drawArc(rectF, drawStart, sweep * phaseS, false, mPaint);
+        }
     }
 
     /**
