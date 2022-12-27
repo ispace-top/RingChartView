@@ -16,8 +16,7 @@
         app:backColor="@android:color/holo_orange_light"
         android:padding="20dp"/>
 ```
-<img src="pic/full_circle.png" alt="full_circle" style="zoom:33%;" />
-
+<img src="pic/full_circle.png" width="180px" />
 ##### 2. 半环形图表
 ```xml
     <top.itjl.ringchartview.RingChartView
@@ -32,7 +31,7 @@
         app:paintWidth="15dp"
         android:padding="20dp"/>
 ```
-<img src="pic/half_circle02.png" alt="half_circle02" style="zoom:33%;" />
+<img src="pic/half_circle02.png" width="180px" />
 
 ##### 2. 多层形图表
 ```xml
@@ -59,7 +58,7 @@
   ringChartView2.setProgressNodes(nodeList);
 ```
 
-<img src="pic/half_circle01.png" alt="half_circle02" style="zoom:33%;" />
+<img src="pic/half_circle01.png" width="180px" />
 
 #### 部分字段参数说明
 
