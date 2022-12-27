@@ -41,8 +41,8 @@ public class RingChartView extends View {
     private int maxValue = 100;
     private float chartSweepAngle = HALF_CIRCLE;
     private int progress = 0;
-    private int backGroundColor = Color.LTGRAY;
-    private int progressColor = Color.GREEN;
+    private int backGroundColor = 0xCCCCCC;
+    private int progressColor = 0x00FF00;
     private boolean isMultiProgress = true;
     private float paintWidth = 40;
     private Paint mPaint = new Paint();
@@ -58,6 +58,8 @@ public class RingChartView extends View {
     private float minProgress = 1;
     private int paintCap = 1;
     private float radius;
+
+    private PorterDuffXfermode porterDuffXfermode=new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
 
     public RingChartView(Context context) {
         this(context, null);
@@ -90,11 +92,10 @@ public class RingChartView extends View {
     }
 
     private void getXMLAttrs(Context context, AttributeSet attrs) {
-        Log.d(TAG,"getXMLAttrs => start");
         TypedArray mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.RingChartView);
         // 获取自定义属性和默认值
         backGroundColor = mTypedArray.getColor(R.styleable.RingChartView_backColor, Color.LTGRAY);
-        isMultiProgress = mTypedArray.getBoolean(R.styleable.RingChartView_multiProgress, true);
+        isMultiProgress = mTypedArray.getBoolean(R.styleable.RingChartView_multiProgress, false);
 
         protectMinValue = mTypedArray.getBoolean(R.styleable.RingChartView_protectMinValue, true);
         minProgress = mTypedArray.getFloat(R.styleable.RingChartView_minProgress, 1);
@@ -108,12 +109,10 @@ public class RingChartView extends View {
         paintWidth = mTypedArray.getDimension(R.styleable.RingChartView_paintWidth, 30);
 
         paintCap = mTypedArray.getInt(R.styleable.RingChartView_paintCap, 1);
-        Log.d(TAG,"PaintCap => "+paintCap);
         animationTime = mTypedArray.getInteger(R.styleable.RingChartView_animationTime, 1500);
         mTypedArray.recycle();
         float offsetAngle = chartAngleStyle == FULL_CIRCLE ? 0 : chartAngleStyle - drawStart;
         chartSweepAngle = chartAngleStyle == FULL_CIRCLE ? 360 : chartSweepAngle + offsetAngle * 2;
-        Log.d(TAG,"getXMLAttrs => end");
     }
 
 
@@ -192,7 +191,7 @@ public class RingChartView extends View {
         mPaint.setColor(backGroundColor);
         if (paintCap == 1) {
             float tempAngle = (float) (180 * paintWidth * 0.5f / (Math.PI * radius));
-            canvas.drawArc(rectF, drawStart + tempAngle, chartSweepAngle * phaseS - tempAngle * 2, false, mPaint);
+            canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS - tempAngle * 2, false, mPaint);
         } else
             canvas.drawArc(rectF, drawStart, chartSweepAngle * phaseS, false, mPaint);
     }
@@ -205,7 +204,7 @@ public class RingChartView extends View {
         }
         if (protectMinValue && sweep < minProgress) sweep = minProgress;
         mPaint.setColor(progressColor);
-        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        mPaint.setXfermode(porterDuffXfermode);
         canvas.drawArc(rectF, drawStart, sweep * phaseS, false, mPaint);
     }
 
@@ -228,7 +227,7 @@ public class RingChartView extends View {
                 sweep = drawStart + chartSweepAngle - begin;
             }
             mPaint.setColor(node.color);
-            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            mPaint.setXfermode(porterDuffXfermode);
             float resultSweep = processValues(sweep * phaseS);
             if (resultSweep == 0) resultSweep = 0.1f;
             if (protectMinValue && resultSweep < minProgress) resultSweep = minProgress;

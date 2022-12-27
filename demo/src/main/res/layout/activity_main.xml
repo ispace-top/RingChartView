@@ -10,21 +10,39 @@
 
     <top.itjl.ringchartview.RingChartView
         android:id="@+id/ring_chart_view1"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:progress="70"
+        app:paintCap="ROUND"
+        app:chartAngleStyle="FULL_CIRCLE"
+        app:paintWidth="15dp"
+        app:progressColor="@android:color/holo_green_light"
+        app:backColor="@android:color/holo_orange_light"
+        android:padding="20dp"/>
+
+    <top.itjl.ringchartview.RingChartView
+        android:id="@+id/ring_chart_view2"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
         app:maxValue="100"
-        app:progress="50"
-        app:paintCap="ROUND"
+        app:progress="30"
+        app:paintCap="SQUARE"
+        app:progressColor="@android:color/holo_green_light"
+        app:backColor="@android:color/holo_orange_light"
+        app:chartAngleStyle="HALF_CIRCLE"
         app:paintWidth="15dp"
         android:padding="20dp"/>
 
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
+    <top.itjl.ringchartview.RingChartView
+        android:id="@+id/ring_chart_view3"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="动态添加"
-        />
-
+        android:layout_width="match_parent"
+        app:maxValue="100"
+        app:progress="80"
+        app:progressColor="@android:color/holo_green_light"
+        app:backColor="@android:color/holo_orange_light"
+        app:chartAngleStyle="HALF_CIRCLE"
+        app:paintWidth="15dp"
+        android:padding="20dp"/>
 
 </LinearLayout>
