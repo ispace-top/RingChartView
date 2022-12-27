@@ -6,9 +6,7 @@
 ```gradle
     //工程根目录build.gradle文件配置jitpack仓库
     repositories {
-        mavenCentral()
         maven { url "https://jitpack.io" }
-        google()
     }
     
     //在module目录的build.gradle配置依赖导入
