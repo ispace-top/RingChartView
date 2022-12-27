@@ -2,6 +2,20 @@
 [![](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)
 
 一个自定义的环形Android图表
+#### 导入方式
+```gradle
+    //工程根目录build.gradle文件配置jitpack仓库
+    repositories {
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+        google()
+    }
+    
+    //在module目录的build.gradle配置依赖导入
+    implementation 'com.github.kerwin162:RingChartView:1.0.32'
+```
+
+#### 部分说明
 ##### 1. 完整环形图表
 ```xml
    <top.itjl.ringchartview.RingChartView
@@ -34,7 +48,7 @@
 ```
 <img src="pic/half_circle02.png" width="220px" />
 
-##### 2. 多层形图表
+##### 3. 多层形图表
 ```xml
    <top.itjl.ringchartview.RingChartView
         android:id="@+id/ring_chart_view2"
@@ -61,7 +75,7 @@
 
 <img src="pic/half_circle01.png" width="220px" />
 
-#### 部分字段参数说明
+##### 4. 部分字段参数说明
 
 | 字段名          | 说明                                                         | 默认值       | 是否支持xml配置                    |
 | --------------- | ------------------------------------------------------------ | ------------ | ---------------------------------- |
