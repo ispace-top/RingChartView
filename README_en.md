@@ -87,10 +87,10 @@ yourRingChart.setProgressNodes(nodeList);
 | progress          | Current progress value              | `0`           | ✅           |
 | minProgress       | Minimum visible granularity         | `1`           | ✅           |
 | paintCap          | Line cap style (`ROUND/SQUARE`)     | ROUND        | ✅         |           
-|paintWidth         │ Stroke thickness (unit：dp/dimen)   │ 40dp         │ ✅         │           
-|backColor           │ Background color                    │ Color.LTGRAY  │✅          │               
-|progressColor       │ Foreground color                    │ Color.GREEN   │✅          │               
-|multiProgress       | Enable multi-segment mode            | false        | ❌(Use setter method) |
+|paintWidth         | Stroke thickness (unit：dp/dimen)   | 40dp         | ✅         |           
+|backColor          | Background color                    | Color.LTGRAY  | ✅         |               
+|progressColor      | Foreground color                    | Color.GREEN   | ✅         |               
+|multiProgress      | Enable multi-segment mode           | false        | ❌(Use setter method) |
 
 **Advanced Methods**:
 ```java 
