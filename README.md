@@ -1,6 +1,8 @@
 ## RingChartView
-[![JitPack](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)
-[English](.README_en.md)
+[![JitPack](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)  
+
+[English](README_en.md)  
+
 Android自定义环形图表组件 - 支持全环/半环样式、多段进度条显示及丰富定制化配置
 
 ### 功能特性
