@@ -1,6 +1,6 @@
 ## RingChartView
 [![JitPack](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)
-
+[English](.README_en.md)
 Android自定义环形图表组件 - 支持全环/半环样式、多段进度条显示及丰富定制化配置
 
 ### 功能特性
@@ -86,8 +86,8 @@ yourRingChart.setProgressNodes(nodeList);
 | minProgress       | 可视化的最小进度颗粒度                | `1`          | ✅           |
 | paintCap           | 线段端头风格 (`ROUND/SQUARE`)        | ROUND       | ✅         |
 | paintWidth         | 线段粗细（单位：dp/尺寸）           | `40　`　　    | ✅    |
-| backColor         | 背景色                             | Color.LTGRAY   | ✅    |
-| progressColor      | 前景色（进度条颜色）              | Color.GREEN   | ✅      |      
+| backColor         | 背景色                             | Color.LTGRAY   |  ✅    |
+| progressColor      | 前景色（进度条颜色）              | Color.GREEN   |  ✅      |      
 |multiProgress     | 是否开启多段式进度条模式      | false    | ❌(需通过set方法) |
 
 
