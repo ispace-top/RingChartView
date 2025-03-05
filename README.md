@@ -1,91 +1,124 @@
-# RingChartView
-[![](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)
+## RingChartView
+[![JitPack](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)
 
-一个自定义的环形Android图表
-#### 导入方式
+Android自定义环形图表组件 - 支持全环/半环样式、多段进度条显示及丰富定制化配置
+
+### 功能特性
+- ✅ 全环形 & 半环形两种基础样式
+- 🎨 单色/多段颜色进度条组合
+- 🔧 可定制的画笔宽度与端点形状（圆头/平头）
+- 📊 最小粒度控制（解决极小进度不可见问题）
+- ⚡ XML属性直接配置 + Java动态设置双模式
+
+### 快速接入
+#### Step1. 添加JitPack仓库 (Project级 build.gradle)
 ```gradle
-    //工程根目录build.gradle文件配置jitpack仓库
+allprojects {
     repositories {
         maven { url "https://jitpack.io" }
     }
-    
-    //在module目录的build.gradle配置依赖导入
-    implementation 'com.github.kerwin162:RingChartView:version'
+}
 ```
 
-#### 部分说明
-##### 1. 完整环形图表
+#### Step2. 添加依赖 (Module级 build.gradle)
+```gradle
+dependencies {
+    implementation 'com.github.kerwin162:RingChartView:{latest_version}'
+}
+```
+*最新版本号请查看[JitPack徽章](#ringchartview)*
+
+### 使用示例
+#### A. XML布局用法示例
+
+##### I. Full Circle Chart (完整环形)
 ```xml
-   <top.itjl.ringchartview.RingChartView
-        android:id="@+id/ring_chart_view1"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:progress="70"
-        app:paintCap="ROUND"
-        app:chartAngleStyle="FULL_CIRCLE"
-        app:paintWidth="15dp"
-        app:progressColor="@android:color/holo_green_light"
-        app:backColor="@android:color/holo_orange_light"
-        android:padding="20dp"/>
+<top.itjl.ringchartview.RingChartView 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:progress="70"
+    app:paintCap="ROUND"
+    app:chartAngleStyle="FULL_CIRCLE"
+    app:paintWidth="15dp"
+    app:progressColor="@android:color/holo_green_light"/>
 ```
-<img src="pic/full_circle.png" width="220px" />
+<img src="pic/full_circle.png" width=220 alt="Full Circle Demo"/>
 
-##### 2. 半环形图表
-```xml
-    <top.itjl.ringchartview.RingChartView
-        android:id="@+id/ring_chart_view3"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:maxValue="100"
-        app:progress="80"
-        app:progressColor="@android:color/holo_green_light"
-        app:backColor="@android:color/holo_orange_light"
-        app:chartAngleStyle="HALF_CIRCLE"
-        app:paintWidth="15dp"
-        android:padding="20dp"/>
+##### II.Half Circle Chart (半环形)
+```xml 
+<top.itjl.ringchartview.RingChartView 
+    ...
+app:maxValue="100"    
+app:chartAngleStyle="HALF_CIRCLE"/>
 ```
-<img src="pic/half_circle02.png" width="220px" />
+<img src="/pic/half_circle02.png" width=220 alt=Half-Circle-Demo />
 
-##### 3. 多层形图表
-```xml
-   <top.itjl.ringchartview.RingChartView
-        android:id="@+id/ring_chart_view2"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:maxValue="100"
-        app:progress="30"
-        app:paintCap="SQUARE"
-        app:progressColor="@android:color/holo_green_light"
-        app:backColor="@android:color/holo_orange_light"
-        app:chartAngleStyle="HALF_CIRCLE"
-        app:paintWidth="15dp"
-        android:padding="20dp"/>
-```
-```java
-    ringChartView2.setMultiProgress(true);
-    List<RingChartView.ProgressNode> nodeList=new ArrayList<>();
-    nodeList.add(new RingChartView.ProgressNode(10, Color.GREEN));
-    nodeList.add(new RingChartView.ProgressNode(20, Color.BLUE));
-    nodeList.add(new RingChartView.ProgressNode(50, Color.RED));
-    nodeList.add(new RingChartView.ProgressNode(10, Color.YELLOW));
-    ringChartView2.setProgressNodes(nodeList);
+---
+
+#### B.Java动态配置（多段进度）
+
+##### III.Multi-Layer Progress Chart （多层分段）
+1.XML基础配置：
+```xml 
+<top.itjl.ringchartview.RingChartView  
+   ...   
+app:multiProgress=true />
 ```
 
-<img src="pic/half_circle01.png" width="220px" />
+2.Java代码设置数据：
+```java 
+List<RingChartView.ProgressNode> nodeList = new ArrayList<>();
+nodeList.add(new ProgressNode(10, Color.GREEN)); //数值+颜色  
+nodeList.add(new ProgressNode(20, Color.BLUE));
+//...其他节点  
 
-##### 4. 部分字段参数说明
+yourRingChart.setProgressNodes(nodeList);
+```
+<img src="/pic/half_circle01.png" width=220 alt=MultiLayer-Demo />
 
-| 字段名          | 说明                                                         | 默认值       | 是否支持xml配置                    |
-| --------------- | ------------------------------------------------------------ | ------------ | ---------------------------------- |
-| maxValue        | 图表最大值                                                   | 100          | YES                                |
-| progress        | 进度值                                                       | 0            | YES                                |
-| minProgress     | 最小进度值，<br />用来解决进度太小不显示问题，为默认可显示的进度最小粒度 | 1            | YES                                |
-| paintCap        | 进度条头部是圆头还是平头（SQUARE/ROUND）                     | ROUND        | YES                                |
-| paintWidth      | 画笔宽度，及进度条宽度                                       | 40px         | YES                                |
-| chartAngleStyle | 图表圆弧类型（HALF_CIRCLE、FULL_CIRCLE）全环形还是半环形     | HALF_CIRCLE  | YES                                |
-| multiProgress   | 是否支持多进度数据                                           | false        | YES                                |
-| progressNodes   | 多进度节点设置                                               | 无           | NO，通过setProgressNodes()方法设置 |
-| backColor       | 进度条背景色                                                 | Color.LTGRAY | YES                                |
-| progressColor   | 进度条前景色（multiProgress=false时生效）                    | Color.GREEN  | YES                                |
-|                 |                                                              |              |                                    |
+---
 
+### API参考手册 
+| 属性              | 描述                                  | 默认值       | XML支持     |
+|-------------------|--------------------------------------|--------------|-------------|
+| maxValue          | 图表的最大刻度值                      | `100`        | ✅           |
+| progress          | 当前进度值                            | `0`          | ✅           |
+| minProgress       | 可视化的最小进度颗粒度                | `1`          | ✅           |
+| paintCap          | 线段端头风格 (`ROUND/SQUARE`)           ｜ ROUND      ｜✅         |
+| paintWidth        | 线段粗细（单位：dp/尺寸）             ｜`40　`　　   ｜　✅    |
+| backColor         |  背景色                             |    Color.LTGRAY     ✅    |
+| progressColor      |  前景色（进度条颜色）              | Color.GREEN   |  ✅      |      
+丨multiProgress     |是否开启多段式进度条模式      | false    |     ❌(需通过set方法) |
+
+
+**高级方法**:
+```java 
+// Set multiple segments data (需先开启multiProgress模式)
+void setProgressNodes(List<ProgressNode> nodes)
+
+// Dynamic update single progress value （单色模式下有效）
+void setCurrentValue(int value) 
+
+// Customize start angle for half-circle （默认180°水平起始）
+void setStartAngle(float degree)  
+```
+
+---
+
+### Q&A常见问题
+ 
+Q：为什么设置了小数值没有显示？
+A：确保minProgess值小于等于目标值；若仍无效尝试增大paintWidth尺寸
+ 
+Q：如何实现渐变效果？
+A：目前暂不支持渐变色填充计划v2.x版本将增加此特性
+ 
+Q：能否调整起始角度？
+A：可通过调用setStartAngle()方法进行旋转角度调整
+
+
+---
+**[🐛 Issue Tracker]** [https://github.com/kerwin162/RingChar​tVie​w/issues](https://github.com/ispace-top/RingChartView/issues)<br>
+
+
+*欢迎Star⭐️ & PR！*
