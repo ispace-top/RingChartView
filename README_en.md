@@ -1,7 +1,7 @@
 ## RingChartView
 [![JitPack](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)
 
-[中文](.README.md)
+[中文](README.md)
 
 Android Custom Circular Chart Component - Supports Full/Half Ring Styles, Multi-Segment Progress Display, and Rich Customization Options
 
