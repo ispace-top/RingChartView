@@ -80,13 +80,13 @@ yourRingChart.setProgressNodes(nodeList);
 
 ### API参考手册 
 | 属性              | 描述                                  | 默认值       | XML支持     |
-|-------------------|--------------------------------------|--------------|-------------|
+|:--:|:--:|:--:|:--:|
 | maxValue          | 图表的最大刻度值                      | `100`        | ✅           |
 | progress          | 当前进度值                            | `0`          | ✅           |
 | minProgress       | 可视化的最小进度颗粒度                | `1`          | ✅           |
 | paintCap           | 线段端头风格 (`ROUND/SQUARE`)        | ROUND       |✅         |
 | paintWidth         |线段粗细（单位：dp/尺寸）           |`40　`　　    |　✅    |
-| backColor         |  背景色                             |    Color.LTGRAY     ✅    |
+| backColor         |  背景色                             |    Color.LTGRAY   |   ✅    |
 | progressColor      |  前景色（进度条颜色）              | Color.GREEN   |  ✅      |      
 |multiProgress     |是否开启多段式进度条模式      | false    |     ❌(需通过set方法) |
 
