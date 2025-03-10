@@ -1,6 +1,5 @@
 package top.itjl.ringchartview;
 
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,12 +10,12 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +56,7 @@ public class RingChartView extends View {
     private int paintCap = 1;
     private float radius;
 
-    private PorterDuffXfermode porterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
+    private final PorterDuffXfermode porterDuffXfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_IN);
     float tempAngle;
 
     public RingChartView(Context context) {
@@ -84,24 +83,22 @@ public class RingChartView extends View {
 
     private void getXMLAttrs(Context context, AttributeSet attrs) {
         TypedArray mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.RingChartView);
-        // 获取自定义属性和默认值
-        backGroundColor = mTypedArray.getColor(R.styleable.RingChartView_backColor, Color.LTGRAY);
-        isMultiProgress = mTypedArray.getBoolean(R.styleable.RingChartView_multiProgress, false);
-
-        protectMinValue = mTypedArray.getBoolean(R.styleable.RingChartView_protectMinValue, true);
-        minProgress = mTypedArray.getFloat(R.styleable.RingChartView_minProgress, 1);
-
-        chartAngleStyle = mTypedArray.getFloat(R.styleable.RingChartView_chartAngleStyle, HALF_CIRCLE);
-        drawStart = mTypedArray.getFloat(R.styleable.RingChartView_drawStart, START_LEFT);
-
-        maxValue = mTypedArray.getInteger(R.styleable.RingChartView_maxValue, 100);
-        progressColor = mTypedArray.getColor(R.styleable.RingChartView_progressColor, Color.GREEN);
-        progress = mTypedArray.getInteger(R.styleable.RingChartView_progress, 0);
-        paintWidth = mTypedArray.getDimension(R.styleable.RingChartView_paintWidth, 30);
-
-        paintCap = mTypedArray.getInt(R.styleable.RingChartView_paintCap, 1);
-        animationTime = mTypedArray.getInteger(R.styleable.RingChartView_animationTime, 1500);
-        mTypedArray.recycle();
+        try {
+            backGroundColor = mTypedArray.getColor(R.styleable.RingChartView_backColor, Color.LTGRAY);
+            isMultiProgress = mTypedArray.getBoolean(R.styleable.RingChartView_multiProgress, false);
+            protectMinValue = mTypedArray.getBoolean(R.styleable.RingChartView_protectMinValue, true);
+            minProgress = mTypedArray.getFloat(R.styleable.RingChartView_minProgress, 1f);
+            chartAngleStyle = mTypedArray.getFloat(R.styleable.RingChartView_chartAngleStyle, HALF_CIRCLE);
+            drawStart = mTypedArray.getFloat(R.styleable.RingChartView_drawStart, START_LEFT);
+            maxValue = mTypedArray.getInteger(R.styleable.RingChartView_maxValue, 100);
+            progressColor = mTypedArray.getColor(R.styleable.RingChartView_progressColor, Color.GREEN);
+            progress = mTypedArray.getInteger(R.styleable.RingChartView_progress, 0);
+            paintWidth = mTypedArray.getDimension(R.styleable.RingChartView_paintWidth, 30f);
+            paintCap = mTypedArray.getInt(R.styleable.RingChartView_paintCap, 1);
+            animationTime = mTypedArray.getInteger(R.styleable.RingChartView_animationTime, 1500);
+        } finally {
+            mTypedArray.recycle();
+        }
         float offsetAngle = chartAngleStyle == FULL_CIRCLE ? 0 : chartAngleStyle - drawStart;
         chartSweepAngle = chartAngleStyle == FULL_CIRCLE ? 360 : chartSweepAngle + offsetAngle * 2;
     }
@@ -113,12 +110,72 @@ public class RingChartView extends View {
         semiAnimator.release();
     }
 
+    /**
+     * 停止正在进行的动画
+     */
+    public void stopAnimation() {
+        semiAnimator.release();
+    }
+
+    // 在onSizeChanged中预计算rectF
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         width = w;
         height = h;
+
+        // 预计算绘制区域
+        float radius = (width >> 1) - paintWidth;
+        rectF = new RectF(
+                (width >> 1) - radius + getPaddingLeft(),
+                (height >> 1) - (chartAngleStyle == HALF_CIRCLE ? radius * 0.5f : radius) + getPaddingTop(),
+                (width >> 1) + radius - getPaddingRight(),
+                (height >> 1) + (chartAngleStyle == HALF_CIRCLE ? radius * 1.5f : radius) - getPaddingBottom());
+
         semiAnimator.start();
+    }
+
+    // 修改后的SemiAnimator内部类
+    private class SemiAnimator {
+        private WeakReference<ValueAnimator> animatorRef;
+        private ValueAnimator.AnimatorUpdateListener listener;
+
+        SemiAnimator(ValueAnimator.AnimatorUpdateListener listener) {
+            this.listener = listener;
+        }
+
+        void start() {
+            if (animatorRef == null || animatorRef.get() == null) {
+                ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+                // 获取外部类的实例以访问非静态字段
+                RingChartView outer = RingChartView.this;
+                animator.setDuration(outer.animationTime);
+                animator.addUpdateListener(animation -> {
+                    if (listener != null) {
+                        listener.onAnimationUpdate(animation);
+                    }
+                });
+                animator.start();
+                animatorRef = new WeakReference<>(animator);
+            }
+        }
+
+        void release() {
+            if (animatorRef != null) {
+                ValueAnimator animator = animatorRef.get();
+                if (animator != null) {
+                    animator.cancel();
+                    animator.removeAllUpdateListeners();
+                }
+                animatorRef.clear();
+            }
+            listener = null;
+        }
+
+        float getPhaseS() {
+            return (animatorRef != null && animatorRef.get() != null) ?
+                    (float) animatorRef.get().getAnimatedValue() : 1f;
+        }
     }
 
     @Override
@@ -132,18 +189,18 @@ public class RingChartView extends View {
 
         if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.AT_MOST) {
             int finalWidth = (int) (paintWidth * 5);
-            int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) (finalWidth / 2 + paintWidth) : finalWidth;
+            int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) ((float) finalWidth / 2 + paintWidth) : finalWidth;
             setMeasuredDimension(finalWidth, finalHeight);
-            radius = (float) ((finalWidth - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
+            radius = (float) ((double) (finalWidth - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
         } else if (widthMode == MeasureSpec.AT_MOST) {
             int finalWidth = (int) ((chartSweepAngle == HALF_CIRCLE ? height * 2 : height) - paintWidth);
             finalWidth = Math.min(finalWidth, width);
             setMeasuredDimension(finalWidth, height);
-            radius = (float) ((height - getPaddingTop() - getPaddingBottom()) / 2 - paintWidth * 0.5);
+            radius = (float) ((double) (height - getPaddingTop() - getPaddingBottom()) / 2 - paintWidth * 0.5);
         } else if (heightMode == MeasureSpec.AT_MOST) {
-            int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) (width / 2 + paintWidth) : width;
+            int finalHeight = chartSweepAngle == HALF_CIRCLE ? (int) ((float) width / 2 + paintWidth) : width;
             setMeasuredDimension(width, finalHeight);
-            radius = (float) ((width - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
+            radius = (float) ((double) (width - getPaddingLeft() - getPaddingRight()) / 2 - paintWidth * 0.5);
         }
 
         tempAngle = (float) (180 * paintWidth * 0.5f / (Math.PI * radius));
@@ -380,7 +437,7 @@ public class RingChartView extends View {
     }
 
     /**
-     * 播放动画
+     * SemiAnimatorSemiAnimator     * 播放动画
      */
     public void playAnimation() {
         semiAnimator.start();
@@ -411,50 +468,6 @@ public class RingChartView extends View {
             }
         }
         return progressNodes;
-    }
-
-    /**
-     * 直线绘制持续的动画类
-     */
-    private class SemiAnimator {
-
-        private float mPhaseS = 1f; //默认动画值0f-1f
-        private final ValueAnimator.AnimatorUpdateListener mListener;//监听
-        private ObjectAnimator objectAnimator;
-
-        private SemiAnimator(ValueAnimator.AnimatorUpdateListener listener) {
-            mListener = listener;
-        }
-
-        private float getPhaseS() {
-            return mPhaseS;
-        }
-
-        private void setPhaseS(float phase) {
-            mPhaseS = phase;
-        }
-
-        /**
-         * Y轴动画
-         */
-        private void start() {
-            release();
-            objectAnimator = ObjectAnimator.ofFloat(this, "phaseS", 0f, 1f);
-            objectAnimator.setDuration(animationTime);
-            objectAnimator.addUpdateListener(mListener);
-            objectAnimator.start();
-        }
-
-        /**
-         * 释放动画
-         */
-        private void release() {
-            if (objectAnimator != null) {
-                objectAnimator.end();
-                objectAnimator.cancel();
-                objectAnimator = null;
-            }
-        }
     }
 
     public static class ProgressNode {
