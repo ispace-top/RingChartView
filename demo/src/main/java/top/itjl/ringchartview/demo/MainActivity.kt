@@ -1,54 +1,106 @@
-package top.itjl.ringchartview.demo;
+package top.itjl.ringchartview.demo
 
-import android.os.Build;
-import android.os.Bundle;
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import top.itjl.ringchart.component.ChartAngleStyle
+import top.itjl.ringchart.component.RingChartView
+import top.itjl.ringchart.model.ProgressNode
+import top.itjl.ringchartview.demo.ui.theme.RingChartViewLibTheme // 根据您的主题包名修改
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import top.itjl.ringchartview.RingChartView;
-import top.itjl.ringchartview.demo.databinding.ActivityMainBinding;
-
-public class MainActivity extends AppCompatActivity {
-    private ActivityMainBinding binding;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        setupRingChartView2();
-    }
-
-    private void setupRingChartView2() {
-        RingChartView ringChartView2 = binding.ringChartView2;
-        ringChartView2.setMultiProgress(true);
-
-        List<RingChartView.ProgressNode> nodeList = new ArrayList<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            nodeList.add(new RingChartView.ProgressNode(10, getColor(R.color.chart_green)));
-            nodeList.add(new RingChartView.ProgressNode(20, getColor(R.color.chart_blue)));
-            nodeList.add(new RingChartView.ProgressNode(50, getColor(R.color.chart_red)));
-            nodeList.add(new RingChartView.ProgressNode(10, getColor(R.color.chart_yellow)));
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            RingChartViewLibTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    RingChartDemoScreen()
+                }
+            }
         }
-        ringChartView2.setProgressNodes(nodeList);
-        ringChartView2.setMaxValue(100);
     }
+}
 
+@Composable
+fun RingChartDemoScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+    ) {
+        // 全环形图
+        RingChartView(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
+                .padding(20.dp),
+            progress = 70,
+            chartAngleStyle = ChartAngleStyle.FullCircle,
+            paintWidth = 15.dp,
+            progressColor = Color(0xFF8BC34A), // holo_green_light
+            backColor = Color(0xFFFF9800) // holo_orange_light
+        )
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        binding.ringChartView1.playAnimation();
-        binding.ringChartView2.playAnimation();
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // 半环形图
+        RingChartView(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
+                .padding(20.dp),
+            maxValue = 100,
+            progress = 30,
+            paintCap = androidx.compose.ui.graphics.StrokeCap.Square,
+            chartAngleStyle = ChartAngleStyle.HalfCircle,
+            paintWidth = 15.dp,
+            progressColor = Color(0xFF8BC34A), // holo_green_light
+            backColor = Color(0xFFFF9800) // holo_orange_light
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // 多段进度条
+        val multiProgressNodes = listOf(
+            ProgressNode(10f, Color(0xFF4CAF50)), // chart_green
+            ProgressNode(20f, Color(0xFF2196F3)), // chart_blue
+            ProgressNode(50f, Color(0xFFF44336)), // chart_red
+            ProgressNode(10f, Color(0xFFFFEB3B))  // chart_yellow
+        )
+        RingChartView(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxSize()
+                .padding(20.dp),
+            maxValue = multiProgressNodes.sumOf { it.value.toDouble() }.toInt(), // 重新计算maxValue
+            isMultiProgress = true,
+            progressNodes = multiProgressNodes,
+            chartAngleStyle = ChartAngleStyle.HalfCircle,
+            paintWidth = 15.dp,
+            backColor = Color(0xFFFF9800) // holo_orange_light
+        )
     }
+}
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        binding.ringChartView1.stopAnimation();
-        binding.ringChartView2.stopAnimation();
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    RingChartViewLibTheme {
+        RingChartDemoScreen()
     }
 }
