@@ -8,7 +8,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 21 // 根据您的需求调整最低SDK版本
+        minSdk = 24 // 根据您的需求调整最低SDK版本
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,7 +44,6 @@ dependencies {
     implementation("androidx.compose.material3:material3") // 如果需要Material Design组件
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
-    implementation("androidx.xr.compose:compose-testing:1.0.0-alpha04")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

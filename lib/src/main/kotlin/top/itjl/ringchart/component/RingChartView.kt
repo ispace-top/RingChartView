@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.xr.compose.testing.toDp
 import top.itjl.ringchart.model.ProgressNode
 import kotlin.math.min
 
@@ -61,7 +60,7 @@ fun RingChartView(
 
     val strokeWidthPx = with(LocalDensity.current) { paintWidth.toPx() }
 
-    Canvas(modifier = modifier.padding((strokeWidthPx / 2f).toDp())) {// 调整padding以确保描边完整显示
+    Canvas(modifier = modifier.padding((strokeWidthPx / 2f / LocalDensity.current.density).dp)) {
         val width = size.width
         val height = size.height
 

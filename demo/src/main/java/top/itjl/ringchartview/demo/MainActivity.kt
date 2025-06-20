@@ -5,7 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import top.itjl.ringchart.component.ChartAngleStyle
 import top.itjl.ringchart.component.RingChartView
 import top.itjl.ringchart.model.ProgressNode
-import top.itjl.ringchartview.demo.ui.theme.RingChartViewLibTheme // 根据您的主题包名修改
+import top.itjl.ringchartview.demo.ui.theme.RingChartViewLibTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +48,8 @@ fun RingChartDemoScreen() {
         // 全环形图
         RingChartView(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()
+                .fillMaxWidth() // 填充可用宽度
+                .aspectRatio(1f) // 保持1:1的宽高比，使其变为正方形
                 .padding(20.dp),
             progress = 70,
             chartAngleStyle = ChartAngleStyle.FullCircle,
@@ -61,8 +63,8 @@ fun RingChartDemoScreen() {
         // 半环形图
         RingChartView(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()
+                .fillMaxWidth() // 填充可用宽度
+                .aspectRatio(1f) // 保持1:1的宽高比，使其变为正方形
                 .padding(20.dp),
             maxValue = 100,
             progress = 30,
@@ -84,8 +86,8 @@ fun RingChartDemoScreen() {
         )
         RingChartView(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxSize()
+                .fillMaxWidth() // 填充可用宽度
+                .aspectRatio(1f) // 保持1:1的宽高比，使其变为正方形
                 .padding(20.dp),
             maxValue = multiProgressNodes.sumOf { it.value.toDouble() }.toInt(), // 重新计算maxValue
             isMultiProgress = true,

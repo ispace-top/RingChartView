@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "top.itjl.ringchartview.demo"
-        minSdk = 21
+        minSdk = 24
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -50,6 +50,8 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.compose.ui:ui:1.0.5")         // 解决 "Unresolved reference: ui"
+    implementation ("androidx.compose.material:material:1.0.5")
     implementation(project(":lib")) // 引用您的UI库模块
 
     implementation("androidx.core:core-ktx:1.16.0")
