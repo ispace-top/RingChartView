@@ -31,9 +31,8 @@ jobs:
         run: chmod +x gradlew # 授予 gradlew 脚本执行权限
 
       - name: Build and Publish with Gradle
-        # 更改任务名称为 publishMavenPublicationToMavenRepository
-        # 这会发布名为 "maven" 的 publication 到 Maven 仓库 (JitPack 将拉取此构建)
-        run: ./gradlew assembleRelease publishMavenPublicationToMavenRepository
+        # 明确指定 lib 模块的发布任务
+        run: ./gradlew assembleRelease :lib:publishMavenPublicationToMavenRepository
 
       - name: Trigger JitPack Build (Optional - Manual Trigger Example)
         run: echo "JitPack会自动从GitHub仓库拉取代码进行构建，无需在此手动触发。"
