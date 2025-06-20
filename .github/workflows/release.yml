@@ -1,36 +1,39 @@
-# .github/workflows/release.yml
-
 name: Publish to JitPack
 
 on:
   push:
+    # 当推送到以下分支时触发工作流
+    # 通常是主分支，或者用于发布的特定分支
     branches:
-      - master # 或者 main, feat-kotlin 等
+      - master # 或者 main, feat-kotlin 等，取决于您的主分支或发布分支
   release:
+    # 当创建新的 release 时触发工作流
     types: [published]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # 授予写入权限，如果需要创建 Release Artifacts 或其他写操作
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # 检出仓库代码
 
-      - name: Set up JDK 17 # 将名称也改为17，更清晰
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17' # <<<<<< 这里从 '11' 修改为 '17'
-          distribution: 'temurin'
-          cache: 'gradle'
+          java-version: '17' # 使用 Java 17，满足 Android Gradle Plugin 要求
+          distribution: 'temurin' # 推荐使用 Temurin OpenJDK 发行版
+          cache: 'gradle' # 缓存 Gradle 依赖，提高构建速度
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x gradlew # 授予 gradlew 脚本执行权限
 
       - name: Build and Publish with Gradle
-        run: ./gradlew assemble publishAllPublicationsToMavenRepository
+        # 更改任务名称为 publishMavenPublicationToMavenRepository
+        # 这会发布名为 "maven" 的 publication 到 Maven 仓库 (JitPack 将拉取此构建)
+        run: ./gradlew assembleRelease publishMavenPublicationToMavenRepository
 
       - name: Trigger JitPack Build (Optional - Manual Trigger Example)
         run: echo "JitPack会自动从GitHub仓库拉取代码进行构建，无需在此手动触发。"
