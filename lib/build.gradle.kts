@@ -49,7 +49,6 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2025.06.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
@@ -61,15 +60,23 @@ afterEvaluate { // 确保 Android Library 插件的任务已经创建
     publishing {
         publications {
             // 为 release 变体创建一个 MavenPublication
-            // 您可以根据需要命名，例如 'release' 或 'maven'
             create<MavenPublication>("maven") {
                 groupId = "com.github.kerwin162" // 您的 GitHub 用户名
                 artifactId = "RingChartView" // 您的库的 artifactId
                 version = "1.0.0" // 您的库版本号，建议与您的 GitHub Release Tag 或 gradle.properties 中的版本号保持一致
 
                 // 使用 Android Gradle Plugin 提供的组件来发布 AAR、源代码和 Javadoc
-                // 这将自动包含 -sources.jar 和 -javadoc.jar 文件
                 from(components["release"])
+            }
+        }
+        // **** 添加此 repositories 块 ****
+        repositories {
+            // 尽管 JitPack 会直接从 GitHub 拉取，但定义一个 Maven 仓库可以确保
+            // Gradle 正确生成 publishMavenPublicationToMavenRepository 任务。
+            // 这里的 URL 可以是任何有效的 Maven 仓库地址，即使它只是一个虚拟的。
+            maven {
+                name = "maven" // 仓库名称，与任务名称相关联
+                url = uri("https://repo.maven.apache.org/maven2/") // 示例公共 Maven 仓库URL，JitPack会忽略此URL
             }
         }
     }
