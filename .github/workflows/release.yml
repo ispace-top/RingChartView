@@ -1,0 +1,56 @@
+name: Publish to JitPack
+
+on:
+  push:
+    # 当推送到以下分支时触发工作流
+    # 通常是主分支，或者用于发布的特定分支
+    branches:
+      - master # 或者 main, feat-kotlin 等，取决于您的主分支或发布分支
+  release:
+    # 当创建新的 release 时触发工作流
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 授予写入权限，如果需要创建 Release Artifacts 或其他写操作
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4 # 检出仓库代码
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11' # 使用 Java 11，与 jitpack.yml 中的要求一致
+          distribution: 'temurin' # 推荐使用 Temurin OpenJDK 发行版
+          cache: 'gradle' # 缓存 Gradle 依赖，提高构建速度
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew # 授予 gradlew 脚本执行权限
+
+      - name: Publish to MavenLocal (optional, for testing)
+        run: ./gradlew publishToMavenLocal # 可选：在本地 Maven 仓库发布，用于测试
+
+      - name: Build and Publish with Gradle
+        # JitPack 会自动克隆您的仓库并根据您的 build.gradle.kts 和 jitpack.yml 进行构建。
+        # 您在这里的 Gradle 命令主要是为了确保项目可以在 CI 环境中正常构建。
+        # 对于 JitPack，通常不需要在这里执行 'publish' 任务，因为JitPack会拉取代码后自行构建。
+        # 但执行一次 assemble 或 build 可以验证项目完整性。
+        run: ./gradlew assemble publishAllPublicationsToMavenRepository
+
+      # 如果您需要手动触发 JitPack 构建，可以在这里添加一个步骤，例如通过 JitPack API。
+      # 但是，JitPack 默认会监听 GitHub 仓库的 push 和 release 事件自动构建，
+      # 所以通常无需额外的操作。
+      - name: Trigger JitPack Build (Optional - Manual Trigger Example)
+        # 这一步通常是不必要的，因为JitPack会监听GitHub事件
+        # 这里仅作示例，如果您确实需要通过API触发
+        # run: |
+        #   curl -X POST \
+        #   -H "Authorization: token YOUR_GITHUB_TOKEN" \
+        #   -H "Content-Type: application/json" \
+        #   -d '{"ref": "${{ github.ref }}"}' \
+        #   "https://jitpack.io/api/builds/com.github.YOUR_GITHUB_USER/YOUR_REPO_NAME"
+        # echo "JitPack build triggered (if API token and correct URL are provided)."
+        run: echo "JitPack会自动从GitHub仓库拉取代码进行构建，无需在此手动触发。"
