@@ -15,5 +15,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "RingChartCompose"
-include(":app")
-include(":ringchart-ui")
+include(":demo")
+include(":lib")

@@ -1,9 +1,5 @@
 package top.itjl.ringchart.component
 
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -15,20 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.NativeCanvas
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.xr.compose.testing.toDp
 import top.itjl.ringchart.model.ProgressNode
 import kotlin.math.min
 
@@ -72,7 +61,7 @@ fun RingChartView(
 
     val strokeWidthPx = with(LocalDensity.current) { paintWidth.toPx() }
 
-    Canvas(modifier = modifier.padding(strokeWidthPx.toDp() / 2)) { // 调整padding以确保描边完整显示
+    Canvas(modifier = modifier.padding((strokeWidthPx / 2f).toDp())) {// 调整padding以确保描边完整显示
         val width = size.width
         val height = size.height
 
@@ -168,8 +157,8 @@ fun PreviewRingChartViewFull() {
         paintCap = StrokeCap.Round,
         chartAngleStyle = ChartAngleStyle.FullCircle,
         paintWidth = 15.dp,
-        progressColor = androidx.compose.ui.graphics.Color(Color.holo_green_light),
-        backColor = androidx.compose.ui.graphics.Color(Color.holo_orange_light)
+        progressColor = androidx.compose.ui.graphics.Color(0xFF8BC34A), // 与 MainActivity 保持一致
+        backColor = androidx.compose.ui.graphics.Color(0xFFFF9800) // 与 MainActivity 保持一致
     )
 }
 
@@ -183,8 +172,8 @@ fun PreviewRingChartViewHalf() {
         paintCap = StrokeCap.Square,
         chartAngleStyle = ChartAngleStyle.HalfCircle,
         paintWidth = 15.dp,
-        progressColor = androidx.compose.ui.graphics.Color(Color.holo_green_light),
-        backColor = androidx.compose.ui.graphics.Color(Color.holo_orange_light)
+        progressColor = androidx.compose.ui.graphics.Color(0xFF8BC34A), // 与 MainActivity 保持一致
+        backColor = androidx.compose.ui.graphics.Color(0xFFFF9800) // 与 MainActivity 保持一致
     )
 }
 
@@ -192,10 +181,10 @@ fun PreviewRingChartViewHalf() {
 @Composable
 fun PreviewRingChartViewMulti() {
     val nodes = listOf(
-        ProgressNode(10f, androidx.compose.ui.graphics.Color(Color.parseColor("#4CAF50"))), // chart_green
-        ProgressNode(20f, androidx.compose.ui.graphics.Color(Color.parseColor("#2196F3"))), // chart_blue
-        ProgressNode(50f, androidx.compose.ui.graphics.Color(Color.parseColor("#F44336"))), // chart_red
-        ProgressNode(10f, androidx.compose.ui.graphics.Color(Color.parseColor("#FFEB3B")))  // chart_yellow
+        ProgressNode(10f, androidx.compose.ui.graphics.Color(0xFF4CAF50)), // chart_green
+        ProgressNode(20f, androidx.compose.ui.graphics.Color(0xFF2196F3)), // chart_blue
+        ProgressNode(50f, androidx.compose.ui.graphics.Color(0xFFF44336)), // chart_red
+        ProgressNode(10f, androidx.compose.ui.graphics.Color(0xFFFFEB3B))  // chart_yellow
     )
     RingChartView(
         modifier = Modifier.fillMaxSize(),
@@ -204,6 +193,6 @@ fun PreviewRingChartViewMulti() {
         progressNodes = nodes,
         chartAngleStyle = ChartAngleStyle.HalfCircle,
         paintWidth = 15.dp,
-        backColor = androidx.compose.ui.graphics.Color(Color.holo_orange_light)
+        backColor = androidx.compose.ui.graphics.Color(0xFFFF9800) // 与 MainActivity 保持一致
     )
 }
