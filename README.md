@@ -1,6 +1,6 @@
 ## RingChartView
 
-[English](README_en.md)
+[![JitPack](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)   [English](README_en.md)
 
 Android Jetpack Compose 自定义环形图表组件 - 支持全环/半环样式、多段进度条显示及丰富定制化配置。本项目已从传统 Android View 系统迁移至 Jetpack Compose。
 
