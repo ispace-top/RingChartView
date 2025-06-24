@@ -77,13 +77,5 @@ afterEvaluate {
                 from(components["release"])
             }
         }
-        // 定义仓库，这个 repositories 块也应该在 publishing 块内部，与 publications 并列
-        repositories {
-            maven {
-                name = "maven" // 仓库名称，与任务名称相关联
-                // 对于 JitPack，这里的 URL 不重要，但需要一个有效的 Maven URL 来让 Gradle 生成任务
-                url = uri("https://repo.maven.apache.org/maven2/")
-            }
-        }
     }
 }
