@@ -35,6 +35,14 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4" // 与您的 Kotlin 版本兼容
     }
+    // 尽管此处已配置 singleVariant，为了确保在 `afterEvaluate` 中组件可用，保留此部分。
+    // 这将确保在 publishing DSL 之前，Android Gradle Plugin 已经准备好发布变体。
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -55,8 +63,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
-// 发布配置
-afterEvaluate { // 确保 Android Library 插件的任务已经创建
+// 再次将 publishing 块包裹在 afterEvaluate 中，这是最稳妥的解决方案
+afterEvaluate {
     publishing {
         publications {
             // 为 release 变体创建一个 MavenPublication
@@ -66,14 +74,13 @@ afterEvaluate { // 确保 Android Library 插件的任务已经创建
                 version = "1.0.0" // 您的库版本号，建议与您的 GitHub Release Tag 或 gradle.properties 中的版本号保持一致
 
                 // 使用 Android Gradle Plugin 提供的组件来发布 AAR、源代码和 Javadoc
+                // components["release"] 在 afterEvaluate 和 android.publishing.singleVariant 配置后将可用
                 from(components["release"])
             }
         }
-        // **** 添加此 repositories 块 ****
+        // 这里定义的仓库是用于 Gradle 在本地执行 publish 任务时使用。
+        // 对于 JitPack，它会直接从 GitHub 拉取代码并自己构建，所以这个配置对 JitPack 来说是次要的。
         repositories {
-            // 尽管 JitPack 会直接从 GitHub 拉取，但定义一个 Maven 仓库可以确保
-            // Gradle 正确生成 publishMavenPublicationToMavenRepository 任务。
-            // 这里的 URL 可以是任何有效的 Maven 仓库地址，即使它只是一个虚拟的。
             maven {
                 name = "maven" // 仓库名称，与任务名称相关联
                 url = uri("https://repo.maven.apache.org/maven2/") // 示例公共 Maven 仓库URL，JitPack会忽略此URL
@@ -81,7 +88,3 @@ afterEvaluate { // 确保 Android Library 插件的任务已经创建
         }
     }
 }
-
-// 注意：这里移除了之前手动创建的 sourcesJar 和 javadocJar 任务，
-// 因为 `from(components["release"])` 会自动处理它们。
-// 如果您需要更复杂的文档生成（例如使用 Dokka），则需要单独配置 Dokka 插件。
