@@ -1,8 +1,9 @@
 ## RingChartView
 
-[![JitPack](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)   [English](README_en.md)
+[![JitPack](https://jitpack.io/v/kerwin162/RingChartView.svg)](https://jitpack.io/#kerwin162/RingChartView)  
 
-Android Jetpack Compose 自定义图表组件 - 支持环形图、饼形图、折线图和条形图，提供丰富的定制化配置和动画效果。本项目已从传统 Android View 系统迁移至 Jetpack Compose。
+ [English](README_en.md)  
+ Android Jetpack Compose 自定义图表组件 - 支持环形图、饼形图、折线图和条形图，提供丰富的定制化配置和动画效果。本项目已从传统 Android View 系统迁移至 Jetpack Compose。
 
 ### 功能特性
 
